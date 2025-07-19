@@ -97,6 +97,10 @@
     }
     function renderRank(type) {
         let users = getAllUsers();
+        if (users.length === 0) {
+            rankListEl.innerHTML = '<div style="color:#f56565;">Chưa có người chơi nào!</div>';
+            return;
+        }
         if (type === 'score') {
             users = users.sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0));
         } else {

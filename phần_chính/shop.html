@@ -116,7 +116,10 @@
     }
     updateShopInfo();
     buyBtn.onclick = function() {
-        if (!userData) return;
+        if (!userData) {
+            msgEl.textContent = 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại!';
+            return;
+        }
         if ((userData.points || 0) >= 50) {
             userData.points -= 50;
             userData.skips = (userData.skips || 0) + 1;

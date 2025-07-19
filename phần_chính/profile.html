@@ -213,7 +213,10 @@
         reader.readAsDataURL(file);
     };
     saveBtn.onclick = function() {
-        if (!userData) return;
+        if (!userData) {
+            msgEl.textContent = 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại!';
+            return;
+        }
         if (uploadedAvatar) {
             userData.avatarImg = uploadedAvatar;
             userData.avatar = null;

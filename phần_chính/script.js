@@ -92,11 +92,13 @@ function saveUserData() {
 switchToRegister.onclick = () => {
     loginSection.style.display = 'none';
     registerSection.style.display = '';
+    regUsernameInput.focus();
 };
 // Chuyển về form đăng nhập
 switchToLogin.onclick = () => {
     registerSection.style.display = 'none';
     loginSection.style.display = '';
+    usernameInput.focus();
 };
 
 // Hàm hash SHA-256 (trả về hex string)
@@ -112,14 +114,17 @@ registerBtn.onclick = async () => {
     const pw2 = regPassword2Input.value;
     if (!username || !pw1 || !pw2) {
         alert('Vui lòng nhập đầy đủ thông tin!');
+        regUsernameInput.focus();
         return;
     }
     if (pw1 !== pw2) {
         alert('Mật khẩu nhập lại không khớp!');
+        regPassword2Input.focus();
         return;
     }
     if (localStorage.getItem('emojithinking_user_' + username)) {
         alert('Tên tài khoản đã tồn tại!');
+        regUsernameInput.focus();
         return;
     }
     const pwHash = await sha256(pw1);
@@ -131,6 +136,7 @@ registerBtn.onclick = async () => {
     regPassword2Input.value = '';
     registerSection.style.display = 'none';
     loginSection.style.display = '';
+    usernameInput.focus();
 };
 
 // Đăng nhập
@@ -139,17 +145,20 @@ loginBtn.onclick = async () => {
     const pw = passwordInput.value;
     if (!username || !pw) {
         alert('Vui lòng nhập tên tài khoản và mật khẩu!');
+        usernameInput.focus();
         return;
     }
     const data = localStorage.getItem('emojithinking_user_' + username);
     if (!data) {
         alert('Tài khoản không tồn tại!');
+        usernameInput.focus();
         return;
     }
     const userObj = JSON.parse(data);
     const pwHash = await sha256(pw);
     if (userObj.password !== pwHash) {
         alert('Mật khẩu không đúng!');
+        passwordInput.focus();
         return;
     }
     currentUser = username;
@@ -166,6 +175,10 @@ loginBtn.onclick = async () => {
 
 // Khi đăng xuất
 logoutBtn.onclick = () => {
+    if (!currentUser) {
+        alert('Bạn chưa đăng nhập!');
+        return;
+    }
     currentUser = null;
     userData = null;
     loginSection.style.display = '';
@@ -173,6 +186,7 @@ logoutBtn.onclick = () => {
     profileBar.style.display = 'none';
     // Xóa lưu đăng nhập
     localStorage.removeItem('emojithinking_logged_in_user');
+    alert('Đã đăng xuất thành công!');
 };
 
 // --- CẬP NHẬT PROFILE BAR ---
@@ -224,6 +238,10 @@ function buySkip() {
 
 // --- SHOP MODAL ---
 shopBtn.onclick = () => {
+    if (!currentUser) {
+        alert('Bạn chưa đăng nhập!');
+        return;
+    }
     window.location.href = 'shop.html';
 };
 closeShopModal.onclick = () => {
@@ -351,29 +369,22 @@ function updateSkipBtn() {
     }
 }
 skipBtn.onclick = () => {
-    if (useSkip()) {
-        current++;
-        if (current < 20) {
-            showQuestion();
-        } else if (currentLevel < TOTAL_LEVELS) {
-            currentLevel++;
-            current = 0;
-            if (userData.progress && userData.progress.levelIndexes && userData.progress.levelIndexes[currentLevel]) {
-                levelIndexes = userData.progress.levelIndexes[currentLevel].slice();
-            } else {
-                levelIndexes = getRandomQuestionIndexes(currentLevel, 20);
-            }
-            showQuestion();
-        } else {
-            hintEl.textContent = 'Hoàn thành tất cả 50 level!';
-            emojiOptionsEl.innerHTML = '';
-            resultEl.textContent = `Bạn đã trả lời đúng ${score}/${TOTAL_LEVELS * QUESTIONS_PER_LEVEL} câu!`;
-            nextBtn.style.display = 'none';
-            levelEl.textContent = '';
-        }
-        saveProgress();
+    if (!currentUser) {
+        alert('Bạn chưa đăng nhập!');
+        return;
     }
-    updateSkipBtn();
+    if (!userData || (userData.skips || 0) <= 0) {
+        alert('Bạn không còn lượt bỏ qua!');
+        return;
+    }
+    userData.skips--;
+    saveUserData();
+    current++;
+    if (current < 20) {
+        showQuestion();
+    } else {
+        nextBtn.onclick();
+    }
 };
 
 nextBtn.onclick = () => {
