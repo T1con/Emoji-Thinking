@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ EmojiThinking</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-container {
+            max-width: 400px;
+            margin: 60px auto 0 auto;
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px #43c6ac33;
+            padding: 36px 24px 28px 24px;
+            text-align: center;
+        }
+        .profile-avatar-big {
+            width: 64px; height: 64px; font-size: 3.2rem; border-radius: 50%; background: #f8ffae; margin: 0 auto 12px auto;
+            display: flex; align-items: center; justify-content: center;
+            background-size: cover; background-position: center;
+            text-align: center;
+        }
+        .profile-info {
+            margin-bottom: 18px;
+        }
+        .profile-points, .profile-level {
+            color: #805ad5;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .avatar-select-block {
+            margin: 12px 0 18px 0;
+        }
+        .avatar-choice {
+            width: 38px;
+            height: 38px;
+            font-size: 2.1rem;
+            border-radius: 50%;
+            background: #f8ffae;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px 5px 0;
+            transition: border 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 4px #43c6ac22;
+        }
+        .avatar-choice.selected {
+            border: 2.5px solid #43c6ac;
+            box-shadow: 0 2px 8px #43c6ac55;
+        }
+        .avatar-upload-block {
+            margin: 10px 0 18px 0;
+        }
+        .profile-upload-label {
+            font-size: 1rem;
+            color: #2d3748;
+            margin-bottom: 4px;
+            display: block;
+        }
+        #avatar-upload {
+            margin: 8px auto 0 auto;
+        }
+        #avatar-preview {
+            display: none;
+            margin: 8px auto 0 auto;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            object-fit: cover;
+            box-shadow: 0 2px 8px #43c6ac33;
+        }
+        .profile-btn {
+            background: #43c6ac;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 16px 0 8px 0;
+            transition: background 0.2s;
+        }
+        .profile-btn:hover { background: #2ebfa5; }
+        .profile-back {
+            background: #f8ffae;
+            color: #43c6ac;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: background 0.2s;
+        }
+        .profile-back:hover { background: #43c6ac; color: #fff; }
+        .profile-message { color: #43c6ac; margin-top: 10px; min-height: 24px; }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h2>Hồ sơ EmojiThinking</h2>
+        <div class="profile-avatar-big" id="profile-avatar-big"></div>
+        <div class="profile-info">
+            <div id="profile-username"></div>
+            <div class="profile-points" id="profile-points"></div>
+            <div class="profile-level" id="profile-level"></div>
+        </div>
+        <div class="avatar-select-block">
+            <div>Chọn avatar mới:</div>
+            <div id="profile-avatar-choices"></div>
+        </div>
+        <div class="avatar-upload-block">
+            <label for="avatar-upload" class="profile-upload-label">Hoặc tải ảnh lên:</label>
+            <input type="file" id="avatar-upload" accept="image/*">
+            <img id="avatar-preview"/>
+        </div>
+        <button class="profile-btn" id="profile-save">Lưu thay đổi</button>
+        <div class="profile-message" id="profile-message"></div>
+        <button class="profile-back" onclick="window.location.href='index.html'">Quay lại</button>
+    </div>
+    <script>
+    const username = localStorage.getItem('emojithinking_logged_in_user');
+    const avatarBig = document.getElementById('profile-avatar-big');
+    const nameEl = document.getElementById('profile-username');
+    const pointsEl = document.getElementById('profile-points');
+    const levelEl = document.getElementById('profile-level');
+    const avatarChoicesEl = document.getElementById('profile-avatar-choices');
+    const saveBtn = document.getElementById('profile-save');
+    const msgEl = document.getElementById('profile-message');
+    const avatarUpload = document.getElementById('avatar-upload');
+    const avatarPreview = document.getElementById('avatar-preview');
+    let userData = null;
+    const AVATARS = ['🧑','🧠','🤩','🤔','😂','🐱','🍎','☕','🚲','✨','🐶','🐧','🐟','🍋','🐦','✏️','🐘','😎','😍','😮','🍉'];
+    let selectedAvatar = AVATARS[0];
+    let uploadedAvatar = null;
+    function updateProfileInfo() {
+        if (!username) {
+            nameEl.textContent = 'Bạn chưa đăng nhập!';
+            avatarBig.textContent = '❓';
+            avatarBig.style.background = '';
+            avatarBig.style.backgroundImage = '';
+            pointsEl.textContent = '';
+            levelEl.textContent = '';
+            saveBtn.disabled = true;
+            return;
+        }
+        const data = localStorage.getItem('emojithinking_user_' + username);
+        if (!data) {
+            nameEl.textContent = 'Tài khoản không tồn tại!';
+            avatarBig.textContent = '❓';
+            avatarBig.style.background = '';
+            avatarBig.style.backgroundImage = '';
+            pointsEl.textContent = '';
+            levelEl.textContent = '';
+            saveBtn.disabled = true;
+            return;
+        }
+        userData = JSON.parse(data);
+        nameEl.textContent = 'Tài khoản: ' + username;
+        pointsEl.textContent = 'Điểm: ' + (userData.points || 0);
+        levelEl.textContent = 'Level cao nhất: ' + (userData.bestLevel || 1);
+        if (userData.avatarImg) {
+            avatarBig.textContent = '';
+            avatarBig.style.background = 'none';
+            avatarBig.style.backgroundImage = `url('${userData.avatarImg}')`;
+            avatarPreview.src = userData.avatarImg;
+            avatarPreview.style.display = 'block';
+            uploadedAvatar = userData.avatarImg;
+        } else {
+            avatarBig.textContent = userData.avatar || AVATARS[0];
+            avatarBig.style.background = '';
+            avatarBig.style.backgroundImage = '';
+            avatarPreview.style.display = 'none';
+            uploadedAvatar = null;
+        }
+        selectedAvatar = userData.avatar || AVATARS[0];
+        renderAvatarChoices();
+        saveBtn.disabled = false;
+    }
+    function renderAvatarChoices() {
+        avatarChoicesEl.innerHTML = '';
+        AVATARS.forEach(emo => {
+            const btn = document.createElement('span');
+            btn.className = 'avatar-choice' + (emo === selectedAvatar ? ' selected' : '');
+            btn.textContent = emo;
+            btn.onclick = () => {
+                selectedAvatar = emo;
+                uploadedAvatar = null;
+                avatarPreview.style.display = 'none';
+                avatarBig.textContent = emo;
+                avatarBig.style.background = '';
+                avatarBig.style.backgroundImage = '';
+                renderAvatarChoices();
+            };
+            avatarChoicesEl.appendChild(btn);
+        });
+    }
+    avatarUpload.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            uploadedAvatar = evt.target.result;
+            avatarPreview.src = uploadedAvatar;
+            avatarPreview.style.display = 'block';
+            avatarBig.textContent = '';
+            avatarBig.style.background = 'none';
+            avatarBig.style.backgroundImage = `url('${uploadedAvatar}')`;
+        };
+        reader.readAsDataURL(file);
+    };
+    saveBtn.onclick = function() {
+        if (!userData) return;
+        if (uploadedAvatar) {
+            userData.avatarImg = uploadedAvatar;
+            userData.avatar = null;
+        } else {
+            userData.avatar = selectedAvatar;
+            userData.avatarImg = null;
+        }
+        localStorage.setItem('emojithinking_user_' + username, JSON.stringify(userData));
+        msgEl.textContent = 'Đã lưu avatar mới!';
+        updateProfileInfo();
+    };
+    updateProfileInfo();
+    </script>
+</body>
+</html> 
