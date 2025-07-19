@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cửa hàng EmojiThinking</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .shop-container {
+            max-width: 400px;
+            margin: 60px auto 0 auto;
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px #43c6ac33;
+            padding: 36px 24px 28px 24px;
+            text-align: center;
+        }
+        .shop-profile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .shop-avatar {
+            width: 44px; height: 44px; font-size: 2.3rem; border-radius: 50%; background: #f8ffae; text-align: center; line-height: 44px; box-shadow: 0 2px 8px #43c6ac33;
+        }
+        .shop-info {
+            text-align: left;
+        }
+        .shop-points, .shop-skips {
+            color: #805ad5;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .shop-btn {
+            background: #43c6ac;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 16px 0 8px 0;
+            transition: background 0.2s;
+        }
+        .shop-btn:hover { background: #2ebfa5; }
+        .shop-back {
+            background: #f8ffae;
+            color: #43c6ac;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 18px;
+            transition: background 0.2s;
+        }
+        .shop-back:hover { background: #43c6ac; color: #fff; }
+        .shop-message { color: #43c6ac; margin-top: 10px; min-height: 24px; }
+    </style>
+</head>
+<body>
+    <div class="shop-container">
+        <h2>Cửa hàng EmojiThinking</h2>
+        <div class="shop-profile">
+            <span id="shop-avatar" class="shop-avatar"></span>
+            <div class="shop-info">
+                <div id="shop-username"></div>
+                <div class="shop-points" id="shop-points"></div>
+                <div class="shop-skips" id="shop-skips"></div>
+            </div>
+        </div>
+        <div>Đổi điểm lấy lượt bỏ qua câu hỏi:</div>
+        <div style="margin:12px 0;">
+            <span>50 điểm = 1 lượt bỏ qua</span>
+        </div>
+        <button class="shop-btn" id="shop-buy-skip">Mua 1 lượt bỏ qua</button>
+        <div class="shop-message" id="shop-message"></div>
+        <button class="shop-back" onclick="window.location.href='index.html'">Quay lại</button>
+    </div>
+    <script>
+    // Lấy user đang đăng nhập
+    const username = localStorage.getItem('emojithinking_logged_in_user');
+    const avatarEl = document.getElementById('shop-avatar');
+    const nameEl = document.getElementById('shop-username');
+    const pointsEl = document.getElementById('shop-points');
+    const skipsEl = document.getElementById('shop-skips');
+    const buyBtn = document.getElementById('shop-buy-skip');
+    const msgEl = document.getElementById('shop-message');
+    let userData = null;
+    function updateShopInfo() {
+        if (!username) {
+            nameEl.textContent = 'Bạn chưa đăng nhập!';
+            avatarEl.textContent = '❓';
+            pointsEl.textContent = '';
+            skipsEl.textContent = '';
+            buyBtn.disabled = true;
+            return;
+        }
+        const data = localStorage.getItem('emojithinking_user_' + username);
+        if (!data) {
+            nameEl.textContent = 'Tài khoản không tồn tại!';
+            avatarEl.textContent = '❓';
+            pointsEl.textContent = '';
+            skipsEl.textContent = '';
+            buyBtn.disabled = true;
+            return;
+        }
+        userData = JSON.parse(data);
+        nameEl.textContent = 'Tài khoản: ' + username;
+        avatarEl.textContent = userData.avatar || '🧑';
+        pointsEl.textContent = 'Điểm: ' + (userData.points || 0);
+        skipsEl.textContent = 'Lượt bỏ qua: ' + (userData.skips || 0);
+        buyBtn.disabled = false;
+    }
+    updateShopInfo();
+    buyBtn.onclick = function() {
+        if (!userData) return;
+        if ((userData.points || 0) >= 50) {
+            userData.points -= 50;
+            userData.skips = (userData.skips || 0) + 1;
+            localStorage.setItem('emojithinking_user_' + username, JSON.stringify(userData));
+            msgEl.textContent = 'Đã mua 1 lượt bỏ qua!';
+            updateShopInfo();
+        } else {
+            msgEl.textContent = 'Bạn không đủ điểm!';
+        }
+    };
+    </script>
+</body>
+</html> 
