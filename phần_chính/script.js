@@ -1,35 +1,126 @@
-// Tạo 1000 câu hỏi mẫu, chia đều cho 50 level
-const emojiList = [
-    {hint: "Trái cây màu đỏ, thường ăn vào mùa thu", answer: "🍎", options: ["🍎", "🍌", "🍉", "🍇"]},
-    {hint: "Loài vật kêu meo meo", answer: "🐱", options: ["🐱", "🐶", "🐭", "🐰"]},
-    {hint: "Thức uống nóng, màu nâu, giúp tỉnh táo", answer: "☕", options: ["☕", "🍵", "🥛", "🍺"]},
-    {hint: "Phương tiện di chuyển trên đường, có hai bánh", answer: "🚲", options: ["🚲", "🚗", "🚌", "🚕"]},
-    {hint: "Loài vật sống dưới nước, có vây, bơi rất giỏi", answer: "🐟", options: ["🐟", "🐬", "🐳", "🦈"]},
-    {hint: "Trái cây màu vàng, vị chua", answer: "🍋", options: ["🍋", "🍌", "🍍", "🍊"]},
-    {hint: "Loài vật có cánh, biết bay, kêu chip chip", answer: "🐦", options: ["🐦", "🐧", "🦆", "🦅"]},
-    {hint: "Thứ dùng để viết lên giấy", answer: "✏️", options: ["✏️", "🖊️", "🖋️", "🖌️"]},
-    {hint: "Loài vật có vòi, rất to", answer: "🐘", options: ["🐘", "🦏", "🦛", "🐪"]},
-    {hint: "Biểu tượng thể hiện sự suy nghĩ", answer: "🤔", options: ["🤔", "😮", "😎", "😂"]},
-    // ... có thể bổ sung thêm mẫu ...
+// Danh sách 4000 emoji phổ biến (ví dụ, ở đây chỉ liệt kê một số, bạn cần bổ sung đủ 4000 emoji thực tế)
+const emojiPool = [
+    "😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😋","😎","😍","😘","🥰","😗","😙","😚","🙂","🤗","🤩","🤔","🤨","😐","😑","😶","🙄","😏","😣","😥","😮","🤐","😯","😪","😫","🥱","😴","😌","😛","😜","😝","🤤","😒","😓","😔","😕","🙃","🤑","😲","☹️","🙁","😖","😞","😟","😤","😢","😭","😦","😧","😨","😩","🤯","😬","😰","😱","🥵","🥶","😳","🤪","😵","😡","😠","🤬","😷","🤒","🤕","🤢","🤮","🤧","😇","🥳","🥺","🤠","🤡","🤥","🤫","🤭","🧐","🤓","😈","👿","👹","👺","💀","👻","👽","👾","🤖","😺","😸","😹","😻","😼","😽","🙀","😿","😾",
+    // ... (bạn cần bổ sung đủ 4000 emoji ở đây, có thể lấy từ các nguồn emoji unicode)
 ];
 
+// Hàm tạo options gồm đáp án đúng và 3 emoji ngẫu nhiên khác
+function generateOptions(answer) {
+    const options = [answer];
+    while (options.length < 4) {
+        const e = emojiPool[Math.floor(Math.random() * emojiPool.length)];
+        if (!options.includes(e)) options.push(e);
+    }
+    // Đảo vị trí các emoji
+    return options.sort(() => Math.random() - 0.5);
+}
+
+// Các câu hỏi mẫu minh họa (giữ nguyên)
+const sampleQuestions = [
+    // Level 1 (Dễ - gợi ý trực tiếp)
+    {hint: "Loài vật kêu meo meo", answer: "🐱", options: generateOptions("🐱")},
+    {hint: "Trái cây màu đỏ, thường ăn vào mùa thu", answer: "🍎", options: generateOptions("🍎")},
+    {hint: "Thức uống nóng, màu nâu, giúp tỉnh táo", answer: "☕", options: generateOptions("☕")},
+    {hint: "Phương tiện di chuyển trên đường, có hai bánh", answer: "🚲", options: generateOptions("🚲")},
+    {hint: "Loài vật sống dưới nước, có vây, bơi rất giỏi", answer: "🐟", options: generateOptions("🐟")},
+    // Level 10 (Trung bình)
+    {hint: "Loài vật thích ăn cá, thường được nuôi trong nhà", answer: "🐱", options: generateOptions("🐱")},
+    {hint: "Thức uống giúp bạn tỉnh táo vào mỗi sáng", answer: "☕", options: generateOptions("☕")},
+    {hint: "Phương tiện nhỏ gọn, không gây ô nhiễm, tốt cho sức khỏe", answer: "🚲", options: generateOptions("🚲")},
+    {hint: "Trái cây màu đỏ, biểu tượng cho sự cám dỗ trong thần thoại", answer: "🍎", options: generateOptions("🍎")},
+    {hint: "Loài vật có thể sống cả dưới nước lẫn trên cạn, thường nhảy", answer: "🐸", options: generateOptions("🐸")},
+    // Level 25 (Khó)
+    {hint: "Nhân vật chính trong bộ phim hoạt hình 'Tom & ...'", answer: "🐱", options: generateOptions("🐱")},
+    {hint: "Được dùng để ghi chú ý tưởng, thường có đầu màu hồng", answer: "✏️", options: generateOptions("✏️")},
+    {hint: "Biểu tượng của sự sáng tạo, thường dùng trong lớp học", answer: "✏️", options: generateOptions("✏️")},
+    {hint: "Loài vật đại diện cho sự may mắn ở Nhật Bản (Maneki-neko)", answer: "🐱", options: generateOptions("🐱")},
+    {hint: "Thức uống xuất hiện nhiều trong các quán cà phê sách", answer: "☕", options: generateOptions("☕")},
+    // Level 40 (Rất khó)
+    {hint: "Kẻ thù truyền kiếp của chuột Jerry", answer: "🐱", options: generateOptions("🐱")},
+    {hint: "Vật dụng nhỏ bé, nhưng có thể tạo nên những tác phẩm lớn", answer: "✏️", options: generateOptions("✏️")},
+    {hint: "Thức uống giúp bạn 'tỉnh như sáo' sau một đêm thức khuya", answer: "☕", options: generateOptions("☕")},
+    {hint: "Trái cây xuất hiện trong logo của một hãng công nghệ nổi tiếng", answer: "🍎", options: generateOptions("🍎")},
+    {hint: "Phương tiện không cần xăng, chỉ cần đôi chân khỏe", answer: "🚲", options: generateOptions("🚲")},
+];
+
+// Tự động sinh thêm câu hỏi cho đủ 1000 câu, mỗi level 20 câu
 const TOTAL_LEVELS = 50;
 const QUESTIONS_PER_LEVEL = 20;
 const TOTAL_QUESTIONS = TOTAL_LEVELS * QUESTIONS_PER_LEVEL;
 
-const questions = [];
-for (let i = 0; i < TOTAL_QUESTIONS; i++) {
-    const base = emojiList[Math.floor(Math.random() * emojiList.length)];
-    // Biến tấu hint cho đa dạng
-    const hint = `${base.hint} (Level ${Math.floor(i/QUESTIONS_PER_LEVEL)+1}) - ${i%QUESTIONS_PER_LEVEL+1}`;
-    // Đảo vị trí đáp án
-    const shuffledOptions = base.options.slice().sort(() => Math.random() - 0.5);
+function getHint(emoji, level, usedHints) {
+    // Một số mô tả mẫu cho các nhóm emoji phổ biến
+    const emojiDescriptions = {
+        "🐱": ["Loài vật nuôi kêu meo meo", "Bạn của Tom trong phim hoạt hình nổi tiếng", "Được nuôi để bắt chuột", "Biểu tượng của sự dễ thương và mềm mại", "Loài vật thích liếm lông"],
+        "🍎": ["Trái cây màu đỏ, thường ăn vào mùa thu", "Biểu tượng của sự cám dỗ trong thần thoại", "Xuất hiện trong logo của một hãng công nghệ nổi tiếng", "Trái cây được tặng cho giáo viên ở phương Tây", "Có câu thành ngữ: 'An ___ a day keeps the doctor away'"],
+        "☕": ["Thức uống giúp tỉnh táo vào buổi sáng", "Xuất hiện nhiều trong các quán cà phê sách", "Được pha từ hạt rang xay", "Thường uống nóng, màu nâu", "Thức uống phổ biến trên toàn thế giới"],
+        "🚲": ["Phương tiện di chuyển không cần xăng", "Tốt cho sức khỏe và môi trường", "Có hai bánh, thường dùng để tập thể dục", "Phương tiện phổ biến ở Hà Lan", "Chỉ cần đôi chân khỏe là đi được"],
+        "🐟": ["Loài vật sống dưới nước, có vây, bơi rất giỏi", "Nguồn thực phẩm giàu omega-3", "Thường được nuôi trong bể kính", "Là biểu tượng của cung Song Ngư", "Có thể sống ở sông, hồ hoặc biển"],
+        // ... có thể bổ sung thêm mô tả cho nhiều emoji khác ...
+    };
+    // Nếu emoji có mô tả riêng, chọn mô tả chưa dùng
+    if (emojiDescriptions[emoji]) {
+        for (const desc of emojiDescriptions[emoji]) {
+            if (!usedHints.has(desc)) return desc;
+        }
+    }
+    // Gợi ý chung cho các emoji khác
+    const genericHints = [
+        "Đây là một biểu tượng quen thuộc trong cuộc sống.",
+        "Bạn thường thấy biểu tượng này trong các cuộc trò chuyện hoặc đời sống hằng ngày.",
+        "Hãy nghĩ đến một hình ảnh, sự vật hoặc cảm xúc mà biểu tượng này đại diện.",
+        "Đố mẹo: Biểu tượng này là gì?",
+        "Biểu tượng này thường xuất hiện trong các ứng dụng nhắn tin.",
+        "Nó có thể đại diện cho một cảm xúc, sự vật hoặc hành động.",
+        "Bạn có thể gặp biểu tượng này khi nói chuyện với bạn bè.",
+        "Đây là một trong những emoji phổ biến nhất.",
+        "Biểu tượng này có thể gợi nhớ đến một sự kiện hoặc kỷ niệm.",
+        "Nó thường được dùng để thể hiện cảm xúc hoặc ý tưởng."
+    ];
+    for (const hint of genericHints) {
+        if (!usedHints.has(hint)) return hint;
+    }
+    // Nếu hết gợi ý, sinh gợi ý ngẫu nhiên có số thứ tự để đảm bảo duy nhất
+    let i = 1;
+    while (true) {
+        const alt = `Gợi ý đặc biệt #${i}`;
+        if (!usedHints.has(alt)) return alt;
+        i++;
+    }
+}
+
+const used = new Set(sampleQuestions.map(q => q.hint + '|' + q.answer));
+const usedHints = new Set(sampleQuestions.map(q => q.hint));
+const questions = [...sampleQuestions];
+
+while (questions.length < TOTAL_QUESTIONS) {
+    const level = Math.floor(questions.length / QUESTIONS_PER_LEVEL) + 1;
+    // Chọn emoji đáp án ngẫu nhiên từ emojiPool
+    const answer = emojiPool[Math.floor(Math.random() * emojiPool.length)];
+    // Sinh gợi ý hợp lý theo level, đảm bảo không trùng
+    const hint = getHint(answer, level, usedHints) + ` (Level ${level})`;
+    if (usedHints.has(hint)) continue;
+    // Tránh trùng lặp
+    const key = hint + '|' + answer;
+    if (used.has(key)) continue;
     questions.push({
         hint,
-        answer: base.answer,
-        options: shuffledOptions
+        answer,
+        options: generateOptions(answer)
     });
+    used.add(key);
+    usedHints.add(hint);
 }
+
+function arrayEquals(a, b) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+
+let levelIndexes = [];
 
 let current = 0;
 let score = 0;
@@ -42,8 +133,6 @@ const nextBtn = document.getElementById('next-btn');
 const scoreEl = document.getElementById('score');
 const levelEl = document.getElementById('level');
 const resetProgressBtn = document.getElementById('reset-progress-btn');
-
-let levelQuestions = [];
 
 // --- TÀI KHOẢN ---
 const loginSection = document.getElementById('login-section');

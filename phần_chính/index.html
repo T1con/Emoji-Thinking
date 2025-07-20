@@ -1,112 +1,146 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EmojiThinking Game</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="profile-bar" style="display:none;">
-        <span id="profile-avatar" class="profile-avatar"></span>
-        <span id="account-name"></span> |
-        <span id="account-best"></span> |
-        <span id="account-points"></span> |
-        <span id="account-skips"></span> |
-        <button id="edit-profile-btn">Sửa hồ sơ</button>
-        <button id="rank-btn">Xếp hạng</button>
-        <button id="shop-btn">Cửa hàng</button>
-        <button id="logout-btn">Đăng xuất</button>
-        <button id="reset-progress-btn" style="background:#f56565;color:#fff;">Bắt đầu lại</button>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="profile-bar" style="display: none">
+      <span id="profile-avatar" class="profile-avatar"></span>
+      <span id="account-name"></span> | <span id="account-best"></span> |
+      <span id="account-points"></span> | <span id="account-skips"></span> |
+      <button id="edit-profile-btn">Sửa hồ sơ</button>
+      <button id="rank-btn">Xếp hạng</button>
+      <button id="shop-btn">Cửa hàng</button>
+      <button id="logout-btn">Đăng xuất</button>
+      <button id="reset-progress-btn" style="background: #f56565; color: #fff">
+        Bắt đầu lại
+      </button>
     </div>
     <div class="bg-emojis" aria-hidden="true">
-        <span class="bg-emoji" style="top:10%;left:8%;">🤔</span>
-        <span class="bg-emoji" style="top:70%;left:12%;">🍎</span>
-        <span class="bg-emoji" style="top:20%;left:80%;">🧠</span>
-        <span class="bg-emoji" style="top:60%;left:75%;">✨</span>
-        <span class="bg-emoji" style="top:40%;left:50%;">😂</span>
-        <span class="bg-emoji" style="top:80%;left:60%;">🚲</span>
-        <span class="bg-emoji" style="top:15%;left:60%;">🐱</span>
-        <span class="bg-emoji" style="top:85%;left:30%;">☕</span>
+      <span class="bg-emoji" style="top: 10%; left: 8%">🤔</span>
+      <span class="bg-emoji" style="top: 70%; left: 12%">🍎</span>
+      <span class="bg-emoji" style="top: 20%; left: 80%">🧠</span>
+      <span class="bg-emoji" style="top: 60%; left: 75%">✨</span>
+      <span class="bg-emoji" style="top: 40%; left: 50%">😂</span>
+      <span class="bg-emoji" style="top: 80%; left: 60%">🚲</span>
+      <span class="bg-emoji" style="top: 15%; left: 60%">🐱</span>
+      <span class="bg-emoji" style="top: 85%; left: 30%">☕</span>
     </div>
     <div class="container">
-        <div class="intro-block">
-            <div class="big-emoji">🧠✨🤩</div>
-            <div class="intro-text">Chào mừng bạn đến với <b>EmojiThinking</b>!<br>Hãy thử tài suy luận và khám phá thế giới emoji cực vui nhộn!</div>
+      <div class="intro-block">
+        <div class="big-emoji">🧠✨🤩</div>
+        <div class="intro-text">
+          Chào mừng bạn đến với <b>EmojiThinking</b>!<br />Hãy thử tài suy luận
+          và khám phá thế giới emoji cực vui nhộn!
         </div>
-        <div id="login-section">
-            <h2 id="login-title">Đăng nhập EmojiThinking</h2>
-            <input type="text" id="username-input" placeholder="Tên tài khoản..." maxlength="20">
-            <input type="password" id="password-input" placeholder="Mật khẩu..." maxlength="32">
-            <button id="login-btn">Đăng nhập</button>
-            <button id="switch-to-register">Đăng ký mới</button>
+      </div>
+      <div id="login-section">
+        <h2 id="login-title">Đăng nhập EmojiThinking</h2>
+        <input
+          type="text"
+          id="username-input"
+          placeholder="Tên tài khoản..."
+          maxlength="20"
+        />
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Mật khẩu..."
+          maxlength="32"
+        />
+        <button id="login-btn">Đăng nhập</button>
+        <button id="switch-to-register">Đăng ký mới</button>
+      </div>
+      <div id="register-section" style="display: none">
+        <h2>Đăng ký tài khoản mới</h2>
+        <div class="avatar-select-block">
+          <div>Chọn avatar:</div>
+          <div id="avatar-choices"></div>
+          <input type="hidden" id="reg-avatar-input" />
         </div>
-        <div id="register-section" style="display:none;">
-            <h2>Đăng ký tài khoản mới</h2>
-            <div class="avatar-select-block">
-                <div>Chọn avatar:</div>
-                <div id="avatar-choices"></div>
-                <input type="hidden" id="reg-avatar-input">
-            </div>
-            <input type="text" id="reg-username-input" placeholder="Tên tài khoản..." maxlength="20">
-            <input type="password" id="reg-password-input" placeholder="Mật khẩu..." maxlength="32">
-            <input type="password" id="reg-password2-input" placeholder="Nhập lại mật khẩu..." maxlength="32">
-            <button id="register-btn">Đăng ký</button>
-            <button id="switch-to-login">Quay lại đăng nhập</button>
+        <input
+          type="text"
+          id="reg-username-input"
+          placeholder="Tên tài khoản..."
+          maxlength="20"
+        />
+        <input
+          type="password"
+          id="reg-password-input"
+          placeholder="Mật khẩu..."
+          maxlength="32"
+        />
+        <input
+          type="password"
+          id="reg-password2-input"
+          placeholder="Nhập lại mật khẩu..."
+          maxlength="32"
+        />
+        <button id="register-btn">Đăng ký</button>
+        <button id="switch-to-login">Quay lại đăng nhập</button>
+      </div>
+      <div id="game-section" style="display: none">
+        <h1>EmojiThinking 🧠</h1>
+        <div id="level" class="level"></div>
+        <div id="hint" class="hint"></div>
+        <div id="emoji-options" class="emoji-options"></div>
+        <div id="result" class="result"></div>
+        <button id="skip-btn" style="display: none">Bỏ qua</button>
+        <button id="next-btn" style="display: none">Câu tiếp theo</button>
+        <div id="score" class="score"></div>
+      </div>
+      <div id="profile-modal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span class="close-modal" id="close-profile-modal">&times;</span>
+          <h2>Hồ sơ cá nhân</h2>
+          <div class="avatar-select-block">
+            <div>Chọn avatar mới:</div>
+            <div id="profile-avatar-choices"></div>
+          </div>
+          <button id="save-profile-btn">Lưu thay đổi</button>
         </div>
-        <div id="game-section" style="display:none;">
-            <h1>EmojiThinking 🧠</h1>
-            <div id="level" class="level"></div>
-            <div id="hint" class="hint"></div>
-            <div id="emoji-options" class="emoji-options"></div>
-            <div id="result" class="result"></div>
-            <button id="skip-btn" style="display:none;">Bỏ qua</button>
-            <button id="next-btn" style="display:none;">Câu tiếp theo</button>
-            <div id="score" class="score"></div>
+      </div>
+      <div id="rank-modal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span class="close-modal" id="close-rank-modal">&times;</span>
+          <h2>Bảng xếp hạng EmojiThinking</h2>
+          <div id="rank-tabs">
+            <button id="rank-score-tab">Top điểm</button>
+            <button id="rank-level-tab">Top level</button>
+          </div>
+          <div id="rank-list"></div>
         </div>
-        <div id="profile-modal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close-modal" id="close-profile-modal">&times;</span>
-                <h2>Hồ sơ cá nhân</h2>
-                <div class="avatar-select-block">
-                    <div>Chọn avatar mới:</div>
-                    <div id="profile-avatar-choices"></div>
-                </div>
-                <button id="save-profile-btn">Lưu thay đổi</button>
-            </div>
+      </div>
+      <div id="shop-modal" class="modal" style="display: none">
+        <div class="modal-content">
+          <span class="close-modal" id="close-shop-modal">&times;</span>
+          <h2>Cửa hàng EmojiThinking</h2>
+          <div>Đổi điểm lấy lượt bỏ qua câu hỏi:</div>
+          <div style="margin: 12px 0">
+            <span>50 điểm = 1 lượt bỏ qua</span>
+          </div>
+          <button id="buy-skip-btn">Mua 1 lượt bỏ qua</button>
+          <div id="shop-message" style="margin-top: 10px; color: #43c6ac"></div>
         </div>
-        <div id="rank-modal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close-modal" id="close-rank-modal">&times;</span>
-                <h2>Bảng xếp hạng EmojiThinking</h2>
-                <div id="rank-tabs">
-                    <button id="rank-score-tab">Top điểm</button>
-                    <button id="rank-level-tab">Top level</button>
-                </div>
-                <div id="rank-list"></div>
-            </div>
-        </div>
-        <div id="shop-modal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span class="close-modal" id="close-shop-modal">&times;</span>
-                <h2>Cửa hàng EmojiThinking</h2>
-                <div>Đổi điểm lấy lượt bỏ qua câu hỏi:</div>
-                <div style="margin:12px 0;">
-                    <span>50 điểm = 1 lượt bỏ qua</span>
-                </div>
-                <button id="buy-skip-btn">Mua 1 lượt bỏ qua</button>
-                <div id="shop-message" style="margin-top:10px;color:#43c6ac;"></div>
-            </div>
-        </div>
+      </div>
     </div>
     <script src="script.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const editProfileBtn = document.getElementById('edit-profile-btn');
-            const rankBtn = document.getElementById('rank-btn');
-            if (editProfileBtn) editProfileBtn.onclick = () => { window.location.href = 'profile.html'; };
-            if (rankBtn) rankBtn.onclick = () => { window.location.href = 'rank.html'; };
-        });
+      window.addEventListener("DOMContentLoaded", () => {
+        const editProfileBtn = document.getElementById("edit-profile-btn");
+        const rankBtn = document.getElementById("rank-btn");
+        if (editProfileBtn)
+          editProfileBtn.onclick = () => {
+            window.location.href = "profile.html";
+          };
+        if (rankBtn)
+          rankBtn.onclick = () => {
+            window.location.href = "rank.html";
+          };
+      });
     </script>
-</body>
-</html> 
+  </body>
+</html>
