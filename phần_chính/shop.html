@@ -79,57 +79,6 @@
         <div class="shop-message" id="shop-message"></div>
         <button class="shop-back" onclick="window.location.href='index.html'">Quay lại</button>
     </div>
-    <script>
-    // Lấy user đang đăng nhập
-    const username = localStorage.getItem('emojithinking_logged_in_user');
-    const avatarEl = document.getElementById('shop-avatar');
-    const nameEl = document.getElementById('shop-username');
-    const pointsEl = document.getElementById('shop-points');
-    const skipsEl = document.getElementById('shop-skips');
-    const buyBtn = document.getElementById('shop-buy-skip');
-    const msgEl = document.getElementById('shop-message');
-    let userData = null;
-    function updateShopInfo() {
-        if (!username) {
-            nameEl.textContent = 'Bạn chưa đăng nhập!';
-            avatarEl.textContent = '❓';
-            pointsEl.textContent = '';
-            skipsEl.textContent = '';
-            buyBtn.disabled = true;
-            return;
-        }
-        const data = localStorage.getItem('emojithinking_user_' + username);
-        if (!data) {
-            nameEl.textContent = 'Tài khoản không tồn tại!';
-            avatarEl.textContent = '❓';
-            pointsEl.textContent = '';
-            skipsEl.textContent = '';
-            buyBtn.disabled = true;
-            return;
-        }
-        userData = JSON.parse(data);
-        nameEl.textContent = 'Tài khoản: ' + username;
-        avatarEl.textContent = userData.avatar || '🧑';
-        pointsEl.textContent = 'Điểm: ' + (userData.points || 0);
-        skipsEl.textContent = 'Lượt bỏ qua: ' + (userData.skips || 0);
-        buyBtn.disabled = false;
-    }
-    updateShopInfo();
-    buyBtn.onclick = function() {
-        if (!userData) {
-            msgEl.textContent = 'Bạn chưa đăng nhập hoặc tài khoản không tồn tại!';
-            return;
-        }
-        if ((userData.points || 0) >= 50) {
-            userData.points -= 50;
-            userData.skips = (userData.skips || 0) + 1;
-            localStorage.setItem('emojithinking_user_' + username, JSON.stringify(userData));
-            msgEl.textContent = 'Đã mua 1 lượt bỏ qua!';
-            updateShopInfo();
-        } else {
-            msgEl.textContent = 'Bạn không đủ điểm!';
-        }
-    };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html> 

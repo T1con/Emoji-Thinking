@@ -79,54 +79,6 @@
         <div id="rank-list"></div>
         <button class="rank-back" onclick="window.location.href='index.html'">Quay lại</button>
     </div>
-    <script>
-    const rankListEl = document.getElementById('rank-list');
-    const scoreTab = document.getElementById('rank-score-tab');
-    const levelTab = document.getElementById('rank-level-tab');
-    function getAllUsers() {
-        const users = [];
-        for (let i = 0; i < localStorage.length; i++) {
-            const k = localStorage.key(i);
-            if (k.startsWith('emojithinking_user_')) {
-                const username = k.replace('emojithinking_user_', '');
-                const data = JSON.parse(localStorage.getItem(k));
-                users.push({ username, ...data });
-            }
-        }
-        return users;
-    }
-    function renderRank(type) {
-        let users = getAllUsers();
-        if (users.length === 0) {
-            rankListEl.innerHTML = '<div style="color:#f56565;">Chưa có người chơi nào!</div>';
-            return;
-        }
-        if (type === 'score') {
-            users = users.sort((a, b) => (b.bestScore || 0) - (a.bestScore || 0));
-        } else {
-            users = users.sort((a, b) => (b.bestLevel || 1) - (a.bestLevel || 1));
-        }
-        rankListEl.innerHTML = '';
-        users.slice(0, 10).forEach((u, idx) => {
-            const row = document.createElement('div');
-            row.className = 'rank-row';
-            row.innerHTML = `<span class="rank-index">${idx+1}</span><span class="profile-avatar">${u.avatar || '🧑'}</span><span>${u.username}</span> <span>${type==='score' ? (u.bestScore||0)+' điểm' : 'Level '+(u.bestLevel||1)}</span>`;
-            rankListEl.appendChild(row);
-        });
-    }
-    scoreTab.onclick = () => {
-        scoreTab.classList.add('active');
-        levelTab.classList.remove('active');
-        renderRank('score');
-    };
-    levelTab.onclick = () => {
-        levelTab.classList.add('active');
-        scoreTab.classList.remove('active');
-        renderRank('level');
-    };
-    // Mặc định tab điểm
-    scoreTab.classList.add('active');
-    renderRank('score');
-    </script>
+    <script src="script.js"></script>
 </body>
 </html> 
