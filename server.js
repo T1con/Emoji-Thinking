@@ -1,67 +1,117 @@
-const express = require('express');
+const http = require('http');
+const fs = require('fs');
 const path = require('path');
-const fs = require('fs/promises');
-const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'phần_chính')));
+const PORT = 3000;
 
-const USERS_FILE = path.join(__dirname, 'phần_chính', 'users.json');
+// MIME types cho các file
+const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'text/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpg',
+    '.gif': 'image/gif',
+    '.svg': 'image/svg+xml',
+    '.wav': 'audio/wav',
+    '.mp4': 'video/mp4',
+    '.woff': 'application/font-woff',
+    '.ttf': 'application/font-ttf',
+    '.eot': 'application/vnd.ms-fontobject',
+    '.otf': 'application/font-otf',
+    '.wasm': 'application/wasm'
+};
 
-// Helper: đọc danh sách user
-async function readUsers() {
-  try {
-    const data = await fs.readFile(USERS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (e) {
-    return [];
-  }
-}
-// Helper: ghi danh sách user
-async function writeUsers(users) {
-  await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2), 'utf8');
-}
+const server = http.createServer((req, res) => {
+    console.log(`${req.method} ${req.url}`);
 
-// API: Lấy danh sách user
-app.get('/api/users', async (req, res) => {
-  const users = await readUsers();
-  res.json(users);
+    // Xử lý CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
+
+    let filePath = req.url;
+    
+    // Mặc định là index.html nếu truy cập root
+    if (filePath === '/') {
+        filePath = '/phần_chính/index.html';
+    }
+    
+    // Thêm đường dẫn thư mục nếu cần
+    if (!filePath.startsWith('/phần_chính/') && !filePath.startsWith('/node_modules/')) {
+        filePath = '/phần_chính' + filePath;
+    }
+
+    // Lấy đường dẫn tuyệt đối
+    const absolutePath = path.join(__dirname, filePath);
+
+    // Kiểm tra file có tồn tại không
+    fs.access(absolutePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            // File không tồn tại, trả về 404
+            res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
+            res.end(`
+                <html>
+                <head><title>404 - Không tìm thấy</title></head>
+                <body>
+                    <h1>404 - Không tìm thấy</h1>
+                    <p>File ${filePath} không tồn tại.</p>
+                    <a href="/">Quay về trang chủ</a>
+                </body>
+                </html>
+            `);
+            return;
+        }
+
+        // Đọc file
+        fs.readFile(absolutePath, (err, data) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'text/html; charset=utf-8' });
+                res.end(`
+                    <html>
+                    <head><title>500 - Lỗi server</title></head>
+                    <body>
+                        <h1>500 - Lỗi server</h1>
+                        <p>Không thể đọc file ${filePath}.</p>
+                        <a href="/">Quay về trang chủ</a>
+                    </body>
+                    </html>
+                `);
+                return;
+            }
+
+            // Xác định MIME type
+            const ext = path.extname(absolutePath).toLowerCase();
+            const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+            // Trả về file
+            res.writeHead(200, { 
+                'Content-Type': contentType + (contentType.startsWith('text/') ? '; charset=utf-8' : '')
+            });
+            res.end(data);
+        });
+    });
 });
 
-// API: Lấy thông tin user theo username
-app.get('/api/users/:username', async (req, res) => {
-  const users = await readUsers();
-  const user = users.find(u => u.username === req.params.username);
-  if (!user) return res.status(404).json({error: 'User not found'});
-  res.json(user);
+server.listen(PORT, () => {
+    console.log(`🚀 Server đang chạy tại: http://localhost:${PORT}`);
+    console.log(`📁 Thư mục gốc: ${__dirname}`);
+    console.log(`🎮 Mở trình duyệt và truy cập: http://localhost:${PORT}`);
+    console.log(`⏹️  Nhấn Ctrl+C để dừng server`);
 });
 
-// API: Thêm user mới
-app.post('/api/users', async (req, res) => {
-  const users = await readUsers();
-  const { username } = req.body;
-  if (!username) return res.status(400).json({error: 'Username required'});
-  if (users.find(u => u.username === username)) return res.status(409).json({error: 'User exists'});
-  users.push(req.body);
-  await writeUsers(users);
-  res.status(201).json({message: 'User created'});
-});
-
-// API: Cập nhật thông tin user (PUT)
-app.put('/api/users/:username', async (req, res) => {
-  const users = await readUsers();
-  const idx = users.findIndex(u => u.username === req.params.username);
-  if (idx === -1) return res.status(404).json({error: 'User not found'});
-  users[idx] = { ...users[idx], ...req.body };
-  await writeUsers(users);
-  res.json({message: 'User updated'});
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'phần_chính', 'index.html'));
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+// Xử lý tắt server
+process.on('SIGINT', () => {
+    console.log('\n👋 Tắt server...');
+    server.close(() => {
+        console.log('✅ Server đã tắt.');
+        process.exit(0);
+    });
 }); 

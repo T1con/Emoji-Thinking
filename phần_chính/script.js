@@ -126,6 +126,7 @@ let current = 0;
 let score = 0;
 let currentLevel = 1;
 
+// Lấy các phần tử DOM với kiểm tra null
 const hintEl = document.getElementById('hint');
 const emojiOptionsEl = document.getElementById('emoji-options');
 const resultEl = document.getElementById('result');
@@ -178,17 +179,22 @@ function saveUserData() {
 }
 
 // Chuyển sang form đăng ký
-switchToRegister.onclick = () => {
-    loginSection.style.display = 'none';
-    registerSection.style.display = '';
-    regUsernameInput.focus();
-};
+if (switchToRegister) {
+    switchToRegister.onclick = () => {
+        if (loginSection) loginSection.style.display = 'none';
+        if (registerSection) registerSection.style.display = '';
+        if (regUsernameInput) regUsernameInput.focus();
+    };
+}
+
 // Chuyển về form đăng nhập
-switchToLogin.onclick = () => {
-    registerSection.style.display = 'none';
-    loginSection.style.display = '';
-    usernameInput.focus();
-};
+if (switchToLogin) {
+    switchToLogin.onclick = () => {
+        if (registerSection) registerSection.style.display = 'none';
+        if (loginSection) loginSection.style.display = '';
+        if (usernameInput) usernameInput.focus();
+    };
+}
 
 // Hàm hash SHA-256 (trả về hex string)
 async function sha256(str) {
@@ -197,154 +203,186 @@ async function sha256(str) {
 }
 
 // Đăng ký tài khoản mới
-registerBtn.onclick = async () => {
-    const username = regUsernameInput.value.trim();
-    const pw1 = regPasswordInput.value;
-    const pw2 = regPassword2Input.value;
-    if (!username || !pw1 || !pw2) {
-        alert('Vui lòng nhập đầy đủ thông tin!');
-        regUsernameInput.focus();
-        return;
-    }
-    if (pw1 !== pw2) {
-        alert('Mật khẩu nhập lại không khớp!');
-        regPassword2Input.focus();
-        return;
-    }
-    if (localStorage.getItem('emojithinking_user_' + username)) {
-        alert('Tên tài khoản đã tồn tại!');
-        regUsernameInput.focus();
-        return;
-    }
-    const pwHash = await sha256(pw1);
-    const userObj = { password: pwHash, bestScore: 0, bestLevel: 1 };
-    localStorage.setItem('emojithinking_user_' + username, JSON.stringify(userObj));
-    alert('Đăng ký thành công! Bạn có thể đăng nhập.');
-    regUsernameInput.value = '';
-    regPasswordInput.value = '';
-    regPassword2Input.value = '';
-    registerSection.style.display = 'none';
-    loginSection.style.display = '';
-    usernameInput.focus();
-};
+if (registerBtn) {
+    registerBtn.onclick = async () => {
+        if (!regUsernameInput || !regPasswordInput || !regPassword2Input) {
+            alert('Lỗi: Không tìm thấy các trường đăng ký!');
+            return;
+        }
+        const username = regUsernameInput.value.trim();
+        const pw1 = regPasswordInput.value;
+        const pw2 = regPassword2Input.value;
+        if (!username || !pw1 || !pw2) {
+            alert('Vui lòng nhập đầy đủ thông tin!');
+            if (regUsernameInput) regUsernameInput.focus();
+            return;
+        }
+        if (pw1 !== pw2) {
+            alert('Mật khẩu nhập lại không khớp!');
+            if (regPassword2Input) regPassword2Input.focus();
+            return;
+        }
+        if (localStorage.getItem('emojithinking_user_' + username)) {
+            alert('Tên tài khoản đã tồn tại!');
+            if (regUsernameInput) regUsernameInput.focus();
+            return;
+        }
+        const pwHash = await sha256(pw1);
+        const userObj = { password: pwHash, bestScore: 0, bestLevel: 1 };
+        localStorage.setItem('emojithinking_user_' + username, JSON.stringify(userObj));
+        alert('Đăng ký thành công! Bạn có thể đăng nhập.');
+        if (regUsernameInput) regUsernameInput.value = '';
+        if (regPasswordInput) regPasswordInput.value = '';
+        if (regPassword2Input) regPassword2Input.value = '';
+        if (registerSection) registerSection.style.display = 'none';
+        if (loginSection) loginSection.style.display = '';
+        if (usernameInput) usernameInput.focus();
+    };
+}
 
 // Đăng nhập
-loginBtn.onclick = async () => {
-    const username = usernameInput.value.trim();
-    const pw = passwordInput.value;
-    if (!username || !pw) {
-        alert('Vui lòng nhập tên tài khoản và mật khẩu!');
-        usernameInput.focus();
-        return;
-    }
-    const data = localStorage.getItem('emojithinking_user_' + username);
-    if (!data) {
-        alert('Tài khoản không tồn tại!');
-        usernameInput.focus();
-        return;
-    }
-    const userObj = JSON.parse(data);
-    const pwHash = await sha256(pw);
-    if (userObj.password !== pwHash) {
-        alert('Mật khẩu không đúng!');
-        passwordInput.focus();
-        return;
-    }
-    currentUser = username;
-    userData = userObj;
-    showAccountInfo();
-    loginSection.style.display = 'none';
-    gameSection.style.display = '';
-    profileBar.style.display = '';
-    startGame();
-    passwordInput.value = '';
-    // Lưu đăng nhập
-    localStorage.setItem('emojithinking_logged_in_user', currentUser);
-};
+if (loginBtn) {
+    loginBtn.onclick = async () => {
+        if (!usernameInput || !passwordInput) {
+            alert('Lỗi: Không tìm thấy các trường đăng nhập!');
+            return;
+        }
+        const username = usernameInput.value.trim();
+        const pw = passwordInput.value;
+        if (!username || !pw) {
+            alert('Vui lòng nhập tên tài khoản và mật khẩu!');
+            if (usernameInput) usernameInput.focus();
+            return;
+        }
+        const data = localStorage.getItem('emojithinking_user_' + username);
+        if (!data) {
+            alert('Tài khoản không tồn tại!');
+            if (usernameInput) usernameInput.focus();
+            return;
+        }
+        const userObj = JSON.parse(data);
+        const pwHash = await sha256(pw);
+        if (userObj.password !== pwHash) {
+            alert('Mật khẩu không đúng!');
+            if (passwordInput) passwordInput.focus();
+            return;
+        }
+        currentUser = username;
+        userData = userObj;
+        showAccountInfo();
+        if (loginSection) loginSection.style.display = 'none';
+        if (gameSection) gameSection.style.display = '';
+        if (profileBar) profileBar.style.display = '';
+        startGame();
+        if (passwordInput) passwordInput.value = '';
+        // Lưu đăng nhập
+        localStorage.setItem('emojithinking_logged_in_user', currentUser);
+    };
+}
 
 // Khi đăng xuất
-logoutBtn.onclick = () => {
-    if (!currentUser) {
-        alert('Bạn chưa đăng nhập!');
-        return;
-    }
-    currentUser = null;
-    userData = null;
-    loginSection.style.display = '';
-    gameSection.style.display = 'none';
-    profileBar.style.display = 'none';
-    // Xóa lưu đăng nhập
-    localStorage.removeItem('emojithinking_logged_in_user');
-    alert('Đã đăng xuất thành công!');
-};
+if (logoutBtn) {
+    logoutBtn.onclick = () => {
+        if (!currentUser) {
+            alert('Bạn chưa đăng nhập!');
+            return;
+        }
+        currentUser = null;
+        userData = null;
+        if (loginSection) loginSection.style.display = '';
+        if (gameSection) gameSection.style.display = 'none';
+        if (profileBar) profileBar.style.display = 'none';
+        // Xóa lưu đăng nhập
+        localStorage.removeItem('emojithinking_logged_in_user');
+        alert('Đã đăng xuất thành công!');
+    };
+}
 
 // --- CẬP NHẬT PROFILE BAR ---
 function showAccountInfo() {
-    accountName.textContent = `Tài khoản: ${currentUser}`;
-    accountBest.textContent = `Level cao nhất: ${userData.bestLevel} | Điểm cao nhất: ${userData.bestScore}`;
+    if (!currentUser || !userData) return;
+    
+    if (accountName) accountName.textContent = `Tài khoản: ${currentUser}`;
+    if (accountBest) accountBest.textContent = `Level cao nhất: ${userData.bestLevel} | Điểm cao nhất: ${userData.bestScore}`;
+    
     // Hiển thị avatar ảnh nếu có, nếu không thì emoji
-    if (userData.avatarImg) {
-        profileAvatar.innerHTML = `<img src="${userData.avatarImg}" alt="avatar" style="width:38px;height:38px;border-radius:50%;object-fit:cover;vertical-align:middle;box-shadow:0 2px 8px #43c6ac33;">`;
-    } else {
-        profileAvatar.textContent = userData.avatar || '🧑';
+    if (profileAvatar) {
+        if (userData.avatarImg) {
+            profileAvatar.innerHTML = `<img src="${userData.avatarImg}" alt="avatar" style="width:38px;height:38px;border-radius:50%;object-fit:cover;vertical-align:middle;box-shadow:0 2px 8px #43c6ac33;">`;
+        } else {
+            profileAvatar.textContent = userData.avatar || '🧑';
+        }
     }
-    accountPoints.textContent = `Điểm: ${userData.points || 0}`;
-    accountSkips.textContent = `Lượt bỏ qua: ${userData.skips || 0}`;
-    if (currentUser) {
+    
+    if (accountPoints) accountPoints.textContent = `Điểm: ${userData.points || 0}`;
+    if (accountSkips) accountSkips.textContent = `Lượt bỏ qua: ${userData.skips || 0}`;
+    
+    if (currentUser && profileBar) {
         profileBar.style.display = '';
         var accInfo = document.querySelector('.account-info');
         if (accInfo) accInfo.style.display = 'none';
-    } else {
+    } else if (profileBar) {
         profileBar.style.display = 'none';
     }
 }
 
 // --- ĐIỂM VÀ SKIP ---
 function addPoints(n) {
+    if (!userData) return;
     userData.points = (userData.points || 0) + n;
     saveUserData();
     showAccountInfo();
 }
+
 function useSkip() {
-    if ((userData.skips || 0) > 0) {
-        userData.skips--;
-        saveUserData();
-        showAccountInfo();
-        return true;
-    }
-    return false;
+    if (!userData || (userData.skips || 0) <= 0) return false;
+    userData.skips--;
+    saveUserData();
+    showAccountInfo();
+    return true;
 }
+
 function buySkip() {
-    if ((userData.points || 0) >= 50) {
-        userData.points -= 50;
-        userData.skips = (userData.skips || 0) + 1;
-        saveUserData();
-        showAccountInfo();
-        return true;
-    }
-    return false;
+    if (!userData || (userData.points || 0) < 50) return false;
+    userData.points -= 50;
+    userData.skips = (userData.skips || 0) + 1;
+    saveUserData();
+    showAccountInfo();
+    return true;
 }
 
 // --- SHOP MODAL ---
-shopBtn.onclick = () => {
-    if (!currentUser) {
-        alert('Bạn chưa đăng nhập!');
-        return;
-    }
-    window.location.href = 'shop.html';
-};
-closeShopModal.onclick = () => {
-    shopModal.style.display = 'none';
-};
-buySkipBtn.onclick = () => {
-    if (buySkip()) {
-        shopMessage.textContent = 'Đã mua 1 lượt bỏ qua!';
-    } else {
-        shopMessage.textContent = 'Bạn không đủ điểm!';
-    }
-};
+if (shopBtn) {
+    shopBtn.onclick = () => {
+        if (!currentUser) {
+            alert('Bạn chưa đăng nhập!');
+            return;
+        }
+        window.location.href = 'shop.html';
+    };
+}
+
+if (closeShopModal) {
+    closeShopModal.onclick = () => {
+        if (shopModal) shopModal.style.display = 'none';
+    };
+}
+
+if (buySkipBtn) {
+    buySkipBtn.onclick = () => {
+        if (buySkip()) {
+            if (shopMessage) shopMessage.textContent = 'Đã mua 1 lượt bỏ qua!';
+        } else {
+            if (shopMessage) shopMessage.textContent = 'Bạn không đủ điểm!';
+        }
+    };
+}
+
+// Đóng modal khi click bên ngoài
 window.addEventListener('click', (e) => {
-    if (e.target === shopModal) shopModal.style.display = 'none';
+    if (shopModal && e.target === shopModal) {
+        shopModal.style.display = 'none';
+    }
 });
 
 function getRandomQuestionIndexes(level, n) {
@@ -367,6 +405,7 @@ function getQuestionsForLevel(level, indexes) {
 
 // --- LƯU & PHỤC HỒI TIẾN TRÌNH ---
 function saveProgress() {
+    if (!userData) return;
     if (!userData.progress) userData.progress = {};
     userData.progress.currentLevel = currentLevel;
     userData.progress.current = current;
@@ -378,7 +417,16 @@ function saveProgress() {
     userData.progress.levelIndexes[currentLevel] = levelIndexes.slice();
     saveUserData();
 }
+
 function loadProgress() {
+    if (!userData) {
+        currentLevel = 1;
+        current = 0;
+        score = 0;
+        levelIndexes = getRandomQuestionIndexes(1, 20);
+        return;
+    }
+    
     if (userData.progress) {
         currentLevel = userData.progress.currentLevel || 1;
         current = userData.progress.current || 0;
@@ -398,7 +446,12 @@ function loadProgress() {
         levelIndexes = getRandomQuestionIndexes(1, 20);
     }
 }
+
 function resetProgress() {
+    if (!userData) {
+        alert('Bạn chưa đăng nhập!');
+        return;
+    }
     delete userData.progress;
     saveUserData();
     currentLevel = 1;
@@ -410,102 +463,125 @@ function resetProgress() {
     showAccountInfo();
     startGame();
 }
-if (resetProgressBtn) resetProgressBtn.onclick = resetProgress;
+
+if (resetProgressBtn) {
+    resetProgressBtn.onclick = resetProgress;
+}
 
 // --- GAME LOGIC ---
 function showQuestion() {
+    if (!hintEl || !emojiOptionsEl || !resultEl || !nextBtn || !scoreEl || !levelEl) {
+        console.error('Không tìm thấy các phần tử game!');
+        return;
+    }
+    
     // Lấy lại danh sách câu hỏi cho level hiện tại
-    levelQuestions = getQuestionsForLevel(currentLevel, levelIndexes);
+    const levelQuestions = getQuestionsForLevel(currentLevel, levelIndexes);
     const q = levelQuestions[current];
-    levelEl.textContent = `Level ${currentLevel} / ${TOTAL_LEVELS}`;
-    hintEl.textContent = q.hint;
-    resultEl.textContent = '';
-    nextBtn.style.display = 'none';
-    emojiOptionsEl.innerHTML = '';
+    
+    if (levelEl) levelEl.textContent = `Level ${currentLevel} / ${TOTAL_LEVELS}`;
+    if (hintEl) hintEl.textContent = q.hint;
+    if (resultEl) resultEl.textContent = '';
+    if (nextBtn) nextBtn.style.display = 'none';
+    if (emojiOptionsEl) emojiOptionsEl.innerHTML = '';
+    
     q.options.forEach(emoji => {
         const btn = document.createElement('button');
         btn.className = 'emoji-btn';
         btn.textContent = emoji;
         btn.onclick = () => checkAnswer(emoji);
-        emojiOptionsEl.appendChild(btn);
+        if (emojiOptionsEl) emojiOptionsEl.appendChild(btn);
     });
-    scoreEl.textContent = `Điểm: ${score}/${levelQuestions.length}`;
+    
+    if (scoreEl) scoreEl.textContent = `Điểm: ${score}/${levelQuestions.length}`;
     updateSkipBtn();
 }
 
 // Khi trả lời đúng hoặc bỏ qua, lưu tiến trình
 function checkAnswer(selected) {
+    const levelQuestions = getQuestionsForLevel(currentLevel, levelIndexes);
     const q = levelQuestions[current];
+    
     if (selected === q.answer) {
-        resultEl.textContent = '🎉 Chính xác!';
+        if (resultEl) resultEl.textContent = '🎉 Chính xác!';
         score++;
         addPoints(10); // +10 điểm mỗi câu đúng
         Array.from(document.getElementsByClassName('emoji-btn')).forEach(btn => btn.disabled = true);
-        nextBtn.style.display = 'inline-block';
+        if (nextBtn) nextBtn.style.display = 'inline-block';
     } else {
-        resultEl.textContent = '❌ Sai rồi, thử lại nhé!';
+        if (resultEl) resultEl.textContent = '❌ Sai rồi, thử lại nhé!';
     }
-    scoreEl.textContent = `Điểm: ${score}/${levelQuestions.length}`;
+    
+    if (scoreEl) scoreEl.textContent = `Điểm: ${score}/${levelQuestions.length}`;
     saveProgress();
 }
 
 // --- SKIP BUTTON ---
 function updateSkipBtn() {
-    if ((userData.skips || 0) > 0) {
+    if (!skipBtn) return;
+    
+    if (userData && (userData.skips || 0) > 0) {
         skipBtn.style.display = '';
     } else {
         skipBtn.style.display = 'none';
     }
 }
-skipBtn.onclick = () => {
-    if (!currentUser) {
-        alert('Bạn chưa đăng nhập!');
-        return;
-    }
-    if (!userData || (userData.skips || 0) <= 0) {
-        alert('Bạn không còn lượt bỏ qua!');
-        return;
-    }
-    userData.skips--;
-    saveUserData();
-    current++;
-    if (current < 20) {
-        showQuestion();
-    } else {
-        nextBtn.onclick();
-    }
-};
 
-nextBtn.onclick = () => {
-    current++;
-    if (current < 20) {
-        showQuestion();
-    } else if (currentLevel < TOTAL_LEVELS) {
-        currentLevel++;
-        current = 0;
-        // Sinh lại danh sách câu hỏi mới cho level tiếp theo (nếu chưa có trong progress)
-        if (userData.progress && userData.progress.levelIndexes && userData.progress.levelIndexes[currentLevel]) {
-            levelIndexes = userData.progress.levelIndexes[currentLevel].slice();
-        } else {
-            levelIndexes = getRandomQuestionIndexes(currentLevel, 20);
+if (skipBtn) {
+    skipBtn.onclick = () => {
+        if (!currentUser) {
+            alert('Bạn chưa đăng nhập!');
+            return;
         }
-        showQuestion();
-    } else {
-        hintEl.textContent = 'Hoàn thành tất cả 50 level!';
-        emojiOptionsEl.innerHTML = '';
-        resultEl.textContent = `Bạn đã trả lời đúng ${score}/${TOTAL_LEVELS * QUESTIONS_PER_LEVEL} câu!`;
-        nextBtn.style.display = 'none';
-        levelEl.textContent = '';
-    }
-    saveProgress();
-    // Lưu điểm và level cao nhất
-    if (userData) {
-        if (currentLevel > userData.bestLevel) userData.bestLevel = currentLevel;
-        if (score > userData.bestScore) userData.bestScore = score;
+        if (!userData || (userData.skips || 0) <= 0) {
+            alert('Bạn không còn lượt bỏ qua!');
+            return;
+        }
+        userData.skips--;
         saveUserData();
-        showAccountInfo();
-    }
-};
+        current++;
+        const levelQuestions = getQuestionsForLevel(currentLevel, levelIndexes);
+        if (current < 20) {
+            showQuestion();
+        } else {
+            if (nextBtn) nextBtn.onclick();
+        }
+    };
+}
+
+if (nextBtn) {
+    nextBtn.onclick = () => {
+        current++;
+        const levelQuestions = getQuestionsForLevel(currentLevel, levelIndexes);
+        if (current < 20) {
+            showQuestion();
+        } else if (currentLevel < TOTAL_LEVELS) {
+            currentLevel++;
+            current = 0;
+            // Sinh lại danh sách câu hỏi mới cho level tiếp theo (nếu chưa có trong progress)
+            if (userData && userData.progress && userData.progress.levelIndexes && userData.progress.levelIndexes[currentLevel]) {
+                levelIndexes = userData.progress.levelIndexes[currentLevel].slice();
+            } else {
+                levelIndexes = getRandomQuestionIndexes(currentLevel, 20);
+            }
+            showQuestion();
+        } else {
+            if (hintEl) hintEl.textContent = 'Hoàn thành tất cả 50 level!';
+            if (emojiOptionsEl) emojiOptionsEl.innerHTML = '';
+            if (resultEl) resultEl.textContent = `Bạn đã trả lời đúng ${score}/${TOTAL_LEVELS * QUESTIONS_PER_LEVEL} câu!`;
+            if (nextBtn) nextBtn.style.display = 'none';
+            if (levelEl) levelEl.textContent = '';
+        }
+        saveProgress();
+        // Lưu điểm và level cao nhất
+        if (userData) {
+            if (currentLevel > userData.bestLevel) userData.bestLevel = currentLevel;
+            if (score > userData.bestScore) userData.bestScore = score;
+            saveUserData();
+            showAccountInfo();
+        }
+    };
+}
 
 function startGame() {
     loadProgress();
@@ -523,9 +599,9 @@ window.addEventListener('DOMContentLoaded', async () => {
             currentUser = autoUser;
             userData = userObj;
             showAccountInfo();
-            loginSection.style.display = 'none';
-            gameSection.style.display = '';
-            profileBar.style.display = '';
+            if (loginSection) loginSection.style.display = 'none';
+            if (gameSection) gameSection.style.display = '';
+            if (profileBar) profileBar.style.display = '';
             startGame();
         } else {
             localStorage.removeItem('emojithinking_logged_in_user');
@@ -534,17 +610,31 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Lưu lại user cuối cùng khi đăng nhập
-loginBtn.addEventListener('click', () => {
-    if (usernameInput.value.trim()) {
-        localStorage.setItem('emojithinking_last_user', usernameInput.value.trim());
-    }
-});
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        if (usernameInput && usernameInput.value.trim()) {
+            localStorage.setItem('emojithinking_last_user', usernameInput.value.trim());
+        }
+    });
+}
 
-startGame();
-
+// Khởi tạo game khi trang load xong
 window.addEventListener('DOMContentLoaded', () => {
+    startGame();
+    
+    // Gán sự kiện cho các nút navigation
     const editProfileBtn = document.getElementById('edit-profile-btn');
     const rankBtn = document.getElementById('rank-btn');
-    if (editProfileBtn) editProfileBtn.onclick = () => { window.location.href = 'profile.html'; };
-    if (rankBtn) rankBtn.onclick = () => { window.location.href = 'rank.html'; };
+    
+    if (editProfileBtn) {
+        editProfileBtn.onclick = () => { 
+            window.location.href = 'profile.html'; 
+        };
+    }
+    
+    if (rankBtn) {
+        rankBtn.onclick = () => { 
+            window.location.href = 'rank.html'; 
+        };
+    }
 }); 
