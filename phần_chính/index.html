@@ -129,6 +129,59 @@
     </div>
     <script src="script.js"></script>
     <script>
+      // Đảm bảo các nút được gán sự kiện ngay khi DOM load
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded - Gán sự kiện cho các nút...');
+        
+        // Gán sự kiện cho nút đăng nhập
+        const loginBtn = document.getElementById('login-btn');
+        if (loginBtn) {
+          console.log('Đã tìm thấy login-btn');
+          loginBtn.addEventListener('click', function() {
+            console.log('Nút đăng nhập được bấm!');
+            // Sự kiện sẽ được xử lý trong script.js
+          });
+        } else {
+          console.error('Không tìm thấy login-btn!');
+        }
+
+        // Gán sự kiện cho nút chuyển đăng ký
+        const switchToRegister = document.getElementById('switch-to-register');
+        if (switchToRegister) {
+          console.log('Đã tìm thấy switch-to-register');
+          switchToRegister.addEventListener('click', function() {
+            console.log('Nút đăng ký được bấm!');
+            // Sự kiện sẽ được xử lý trong script.js
+          });
+        } else {
+          console.error('Không tìm thấy switch-to-register!');
+        }
+
+        // Gán sự kiện cho nút đăng ký
+        const registerBtn = document.getElementById('register-btn');
+        if (registerBtn) {
+          console.log('Đã tìm thấy register-btn');
+          registerBtn.addEventListener('click', function() {
+            console.log('Nút đăng ký được bấm!');
+            // Sự kiện sẽ được xử lý trong script.js
+          });
+        } else {
+          console.error('Không tìm thấy register-btn!');
+        }
+
+        // Gán sự kiện cho nút quay lại đăng nhập
+        const switchToLogin = document.getElementById('switch-to-login');
+        if (switchToLogin) {
+          console.log('Đã tìm thấy switch-to-login');
+          switchToLogin.addEventListener('click', function() {
+            console.log('Nút quay lại đăng nhập được bấm!');
+            // Sự kiện sẽ được xử lý trong script.js
+          });
+        } else {
+          console.error('Không tìm thấy switch-to-login!');
+        }
+      });
+
       window.addEventListener("DOMContentLoaded", () => {
         const editProfileBtn = document.getElementById("edit-profile-btn");
         const rankBtn = document.getElementById("rank-btn");

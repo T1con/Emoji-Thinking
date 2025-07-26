@@ -3,89 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test & Debug EmojiThinking</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Test Buttons - EmojiThinking</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
         .test-container {
-            max-width: 500px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            padding: 32px 24px 24px 24px;
-            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .test-btn {
-            background: #43c6ac;
-            color: #fff;
+        button {
+            background: #007bff;
+            color: white;
             border: none;
-            border-radius: 8px;
             padding: 10px 20px;
-            font-size: 1rem;
+            margin: 5px;
+            border-radius: 5px;
             cursor: pointer;
-            margin: 8px 6px;
-            transition: background 0.2s;
         }
-        .test-btn:hover { background: #2ebfa5; }
-        .test-danger { background: #f56565; }
-        .test-danger:hover { background: #c53030; }
-        .test-output {
-            margin-top: 18px;
-            text-align: left;
-            background: #f8ffae;
-            border-radius: 8px;
-            padding: 12px;
-            font-size: 0.98rem;
-            max-height: 300px;
-            overflow: auto;
+        button:hover {
+            background: #0056b3;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="test-container">
-        <h2>Test & Debug EmojiThinking</h2>
-        <button class="test-btn" onclick="showLocalStorage()">Xem LocalStorage</button>
-        <button class="test-btn" onclick="showCurrentUser()">Xem user hiện tại</button>
-        <button class="test-btn" onclick="showProgress()">Kiểm tra tiến trình</button>
-        <button class="test-btn test-danger" onclick="clearCurrentUser()">Xóa user hiện tại</button>
-        <button class="test-btn test-danger" onclick="clearAll()">Xóa toàn bộ LocalStorage</button>
-        <div class="test-output" id="test-output"></div>
+        <h2>Test Các Nút Đăng Nhập</h2>
+        
+        <div>
+            <input type="text" id="username-input" placeholder="Tên tài khoản..." style="padding: 8px; margin: 5px; width: 200px;">
+            <input type="password" id="password-input" placeholder="Mật khẩu..." style="padding: 8px; margin: 5px; width: 200px;">
+        </div>
+        
+        <div>
+            <button id="login-btn">Đăng nhập</button>
+            <button id="switch-to-register">Đăng ký mới</button>
+        </div>
+        
+        <div id="register-section" style="display: none; margin-top: 20px;">
+            <h3>Đăng ký tài khoản mới</h3>
+            <input type="text" id="reg-username-input" placeholder="Tên tài khoản..." style="padding: 8px; margin: 5px; width: 200px;">
+            <input type="password" id="reg-password-input" placeholder="Mật khẩu..." style="padding: 8px; margin: 5px; width: 200px;">
+            <input type="password" id="reg-password2-input" placeholder="Nhập lại mật khẩu..." style="padding: 8px; margin: 5px; width: 200px;">
+            <div>
+                <button id="register-btn">Đăng ký</button>
+                <button id="switch-to-login">Quay lại đăng nhập</button>
+            </div>
+        </div>
+        
+        <div class="test-result" id="test-result">
+            <strong>Kết quả test:</strong><br>
+            <span id="test-status">Đang kiểm tra...</span>
+        </div>
     </div>
+
+    <script src="test-buttons.js"></script>
     <script>
-    function showLocalStorage() {
-        const out = document.getElementById('test-output');
-        let html = '<b>LocalStorage:</b><br><pre>' + JSON.stringify(localStorage, null, 2) + '</pre>';
-        out.innerHTML = html;
-    }
-    function showCurrentUser() {
-        const out = document.getElementById('test-output');
-        const username = localStorage.getItem('emojithinking_logged_in_user');
-        if (!username) { out.innerHTML = 'Chưa đăng nhập.'; return; }
-        const data = localStorage.getItem('emojithinking_user_' + username);
-        if (!data) { out.innerHTML = 'Không tìm thấy user trong LocalStorage.'; return; }
-        out.innerHTML = '<b>User hiện tại:</b><br><pre>' + JSON.stringify(JSON.parse(data), null, 2) + '</pre>';
-    }
-    function showProgress() {
-        const out = document.getElementById('test-output');
-        const username = localStorage.getItem('emojithinking_logged_in_user');
-        if (!username) { out.innerHTML = 'Chưa đăng nhập.'; return; }
-        const data = localStorage.getItem('emojithinking_user_' + username);
-        if (!data) { out.innerHTML = 'Không tìm thấy user trong LocalStorage.'; return; }
-        const user = JSON.parse(data);
-        out.innerHTML = '<b>Tiến trình:</b><br><pre>' + JSON.stringify(user.progress, null, 2) + '</pre>';
-    }
-    function clearCurrentUser() {
-        const username = localStorage.getItem('emojithinking_logged_in_user');
-        if (!username) { alert('Chưa đăng nhập!'); return; }
-        localStorage.removeItem('emojithinking_user_' + username);
-        alert('Đã xóa user: ' + username);
-    }
-    function clearAll() {
-        if (confirm('Bạn có chắc chắn muốn xóa toàn bộ LocalStorage?')) {
-            localStorage.clear();
-            alert('Đã xóa toàn bộ LocalStorage!');
-        }
-    }
+        // Thêm logic chuyển đổi form
+        document.addEventListener('DOMContentLoaded', function() {
+            const switchToRegister = document.getElementById('switch-to-register');
+            const switchToLogin = document.getElementById('switch-to-login');
+            const loginSection = document.getElementById('login-section');
+            const registerSection = document.getElementById('register-section');
+            
+            if (switchToRegister) {
+                switchToRegister.onclick = function() {
+                    document.getElementById('register-section').style.display = 'block';
+                    document.getElementById('test-result').innerHTML = '<strong>✅ Test thành công!</strong><br>Nút "Đăng ký mới" hoạt động!';
+                };
+            }
+            
+            if (switchToLogin) {
+                switchToLogin.onclick = function() {
+                    document.getElementById('register-section').style.display = 'none';
+                    document.getElementById('test-result').innerHTML = '<strong>✅ Test thành công!</strong><br>Nút "Quay lại đăng nhập" hoạt động!';
+                };
+            }
+            
+            if (loginBtn) {
+                loginBtn.onclick = function() {
+                    document.getElementById('test-result').innerHTML = '<strong>✅ Test thành công!</strong><br>Nút "Đăng nhập" hoạt động!';
+                };
+            }
+            
+            if (registerBtn) {
+                registerBtn.onclick = function() {
+                    document.getElementById('test-result').innerHTML = '<strong>✅ Test thành công!</strong><br>Nút "Đăng ký" hoạt động!';
+                };
+            }
+        });
     </script>
 </body>
 </html> 

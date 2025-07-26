@@ -589,8 +589,9 @@ function startGame() {
     if (userData) showAccountInfo();
 }
 
-// Tự động đăng nhập nếu có lưu
+// Tự động đăng nhập nếu có lưu và khởi tạo game
 window.addEventListener('DOMContentLoaded', async () => {
+    // Tự động đăng nhập nếu có lưu
     const autoUser = localStorage.getItem('emojithinking_logged_in_user');
     if (autoUser) {
         const data = localStorage.getItem('emojithinking_user_' + autoUser);
@@ -607,19 +608,8 @@ window.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('emojithinking_logged_in_user');
         }
     }
-});
 
-// Lưu lại user cuối cùng khi đăng nhập
-if (loginBtn) {
-    loginBtn.addEventListener('click', () => {
-        if (usernameInput && usernameInput.value.trim()) {
-            localStorage.setItem('emojithinking_last_user', usernameInput.value.trim());
-        }
-    });
-}
-
-// Khởi tạo game khi trang load xong
-window.addEventListener('DOMContentLoaded', () => {
+    // Khởi tạo game
     startGame();
     
     // Gán sự kiện cho các nút navigation
@@ -637,4 +627,20 @@ window.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'rank.html'; 
         };
     }
+
+    // Lưu lại user cuối cùng khi đăng nhập
+    if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+            if (usernameInput && usernameInput.value.trim()) {
+                localStorage.setItem('emojithinking_last_user', usernameInput.value.trim());
+            }
+        });
+    }
+
+    // Debug: Kiểm tra các nút có tồn tại không
+    console.log('Debug - Các nút đăng nhập:');
+    console.log('login-btn:', document.getElementById('login-btn'));
+    console.log('switch-to-register:', document.getElementById('switch-to-register'));
+    console.log('register-btn:', document.getElementById('register-btn'));
+    console.log('switch-to-login:', document.getElementById('switch-to-login'));
 }); 
